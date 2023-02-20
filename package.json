@@ -1,0 +1,26 @@
+{
+  "name": "piece",
+  "version": "1.0.0",
+  "description": "Piece API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piecegg/Backend-Blockchain.git"
+  },
+  "keywords": [
+    "piece"
+  ],
+  "author": "Noah Naizir",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/piecegg/Backend-Blockchain/issues"
+  },
+  "homepage": "https://github.com/piecegg/Backend-Blockchain#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "twilio": "^4.7.2"
+  }
+}
