@@ -254,7 +254,7 @@ pub contract Pieces: NonFungibleToken {
 	}
 
 	// Public function to mint NFTs.
-	pub fun mintNFT(metadataId: UInt64, recipient: &{NonFungibleToken.Receiver}, payment: @FlowToken.Vault, serial: UInt64): UInt64 {
+	pub fun mintNFT(metadataId: UInt64, recipient: &{NonFungibleToken.Receiver}, payment: @FlowToken.Vault): UInt64 {
 		pre {
 			payment.balance == 1.0:
 				"Payment does not match the price. You passed in ".concat(payment.balance.toString()).concat(" but this NFT costs 1 Flow"))
@@ -378,7 +378,11 @@ pub contract Pieces: NonFungibleToken {
     self.collectionInfo["price"] = 1.0
     self.collectionInfo["dateCreated"] = getCurrentBlock().timestamp
     self.collectionInfo["profit"] = 0.0
-		self.collectionInfo["nftRoyalty"] = 0.07
+		self.collectionInfo["nftRoyalty"] =  MetadataViews.Royalty(
+          recepient: getAccount(self.account.address).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(/public/flowTokenReceiver),
+          cut: 0.7,
+          description: "This is a royalty cut on primary sales."
+        )
 
 
 		self.nextEditionId = 0
