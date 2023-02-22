@@ -4,6 +4,7 @@ import (
 	"fmt"
 	//if you imports this with .  you do not have to repeat overflow everywhere
 	. "github.com/bjartek/overflow"
+	"github.com/fatih/color"
 )
 
 func main() {
@@ -17,4 +18,15 @@ func main() {
 	fmt.Println("Press any key to continue")
 	fmt.Scanln()
 
+	color.Red("Should be able to upload metadata to the contract the Collection")
+	o.Tx(
+		"uploadMetadata",
+		WithSigner("account"),
+		WithArg("name", `"First Piece"`),
+		WithArg("description", `"I bet that Argentina will win the 2022 World Cup"`),
+		WithArg("image", `"Alex1.png"`),
+		WithArg("extra", `{"String": "Piece Extra Metadata If needed"}`),
+		WithArg("ipfsCID", "ipfs://bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4"),
+	).Print()
+	color.Green("-----------------------------PASSED---------------------")
 }

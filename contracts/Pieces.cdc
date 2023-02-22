@@ -287,7 +287,7 @@ pub contract Pieces: NonFungibleToken {
 	}
 
 	pub resource Administrator {
-		pub fun createNFTMetadata(name: String, description: String, imagePath: String, thumbnailPath: String?, ipfsCID: String, extra: {String: AnyStruct}) {
+		pub fun createNFTMetadata(name: String, description: String, imagePath: String, ipfsCID: String, extra: {String: AnyStruct}) {
 			Pieces.metadatas[Pieces.nextMetadataId] = NFTMetadata(
 				_name: name,
 				_description: description,
