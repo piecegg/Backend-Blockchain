@@ -58,4 +58,11 @@ func main() {
 		WithArg("MetadataId", "0"),
 	)
 	color.Green("-----------------------------PASSED---------------------")
+
+	// Get all the Pieces NFTs owned by this account
+	color.Red("Should be able to fetch all the Pieces NFTs owned by this account")
+	o.Script("getOwnedNFTs",
+		WithArg("Account", "bob"),
+	)
+	color.Green("-----------------------------PASSED---------------------")
 }

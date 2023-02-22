@@ -42,7 +42,7 @@ pub contract Pieces: NonFungibleToken {
 		pub let image: MetadataViews.IPFSFile
 		pub let price: UFix64
 		pub var extra: {String: AnyStruct}
-		pub var supply: UInt64
+		pub var minted: UInt64
 		pub let purchasers: {UInt64: Address}
 		pub let metadataId: UInt64
 
@@ -50,8 +50,8 @@ pub contract Pieces: NonFungibleToken {
 			self.purchasers[serial] = buyer
 		}
 
-		access(account) fun updateSupply() {
-			self.supply = self.supply + 1
+		access(account) fun updateMinted() {
+			self.minted = self.minted + 1
 		}
 
 		init(_name: String, _description: String, _image: MetadataViews.IPFSFile, _price: UFix64, _extra: {String: AnyStruct}) {
@@ -61,7 +61,7 @@ pub contract Pieces: NonFungibleToken {
 			self.image = _image
 			self.price = _price
 			self.extra = _extra
-			self.supply = 0
+			self.minted = 0
 			self.purchasers = {}
 		}
 	}
@@ -167,7 +167,7 @@ pub contract Pieces: NonFungibleToken {
 				Pieces.metadatas[_metadataId] != nil:
 					"This NFT does not exist in this collection."
 			}
-			let _serial = Pieces.getNFTMetadata(_metadataId)!.supply
+			let _serial = Pieces.getNFTMetadata(_metadataId)!.minted
 			self.id = self.uuid
 			self.metadataId = _metadataId
 			self.serial = _serial
@@ -183,13 +183,13 @@ pub contract Pieces: NonFungibleToken {
 				Pieces.buyersList[_recipient] = {_metadataId: [_serial]}
 			}
 
-			// Update who bought this serial inside NFTMetadata
 			let metadataRef = (&Pieces.metadatas[_metadataId] as &NFTMetadata?)!
+			// Update who bought this serial inside NFTMetadata
 			metadataRef.purchased(serial: _serial, buyer: _recipient)
+			// Update the total supply of this MetadataId by 1
+			metadataRef.updateMinted()
 			// Update Pieces collection NFTs count
 			Pieces.totalSupply = Pieces.totalSupply + 1
-			// Update the total supply of this MetadataId by 1
-			metadataRef.updateSupply()
 
 			emit Minted(id: self.id, recipient: _recipient, metadataId: _metadataId)
 		}
