@@ -189,7 +189,7 @@ pub contract Pieces: NonFungibleToken {
 			// Update Pieces collection NFTs count
 			Pieces.totalSupply = Pieces.totalSupply + 1
 			// Update the total supply of this MetadataId by 1
-			Pieces.getNFTMetadata(_metadataId)!.updateSupply()
+			metadataRef.updateSupply()
 
 			emit Minted(id: self.id, recipient: _recipient, metadataId: _metadataId)
 		}

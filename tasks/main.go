@@ -51,4 +51,11 @@ func main() {
 	)
 	color.Green("-----------------------------PASSED---------------------")
 
+	// Get Metadatas recorded in the contract after minting
+	// (supply should increase)
+	color.Red("Should be able to fetch metadatas from the contract")
+	o.Script("getNFTSupply",
+		WithArg("MetadataId", "0"),
+	)
+	color.Green("-----------------------------PASSED---------------------")
 }
