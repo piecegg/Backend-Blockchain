@@ -1,22 +1,19 @@
 {
-	"emulators": {
-		"default": {
-			"port": 3569,
-			"serviceAccount": "emulator-account"
-		}
-	},
 	"contracts": {
-		"Pieces": "./contracts/Pieces.cdc",
-		"NonFungibleToken": {
-			"source": "./contracts/standard/NonFungibleToken.cdc",
+		"FlowToken": {
+			"source": "./contracts/standard/FlowToken.cdc",
 			"aliases": {
-				"testnet": "0x631e88ae7f1d7c20"
+				"emulator": "0x0ae53cb6e3f42a79",
+				"mainnet": "0x1654653399040a61",
+				"testnet": "0x7e60df042a9c0868"
 			}
 		},
-		"NFTStorefrontV2": {
-			"source": "./contracts/standard/NFTStorefrontV2.cdc",
+		"FungibleToken": {
+			"source": "./contracts/standard/FungibleToken.cdc",
 			"aliases": {
-				"testnet": "0x2d55b98eb200daef"
+				"emulator": "ee82856bf20e2aa6",
+				"mainnet": "0xf233dcee88fe0abe",
+				"testnet": "9a0766d93b6608b7"
 			}
 		},
 		"MetadataViews": {
@@ -26,22 +23,19 @@
 				"testnet": "0x631e88ae7f1d7c20"
 			}
 		},
-		"FlowToken": {
-			"source": "./contracts/standard/FlowToken.cdc",
+		"NFTStorefrontV2": {
+			"source": "./contracts/standard/NFTStorefrontV2.cdc",
 			"aliases": {
-				"testnet": "0x7e60df042a9c0868",
-				"emulator": "0x0ae53cb6e3f42a79",
-				"mainnet": "0x1654653399040a61"
+				"testnet": "0x2d55b98eb200daef"
 			}
 		},
-		"FungibleToken": {
-			"source": "./contracts/standard/FungibleToken.cdc",
+		"NonFungibleToken": {
+			"source": "./contracts/standard/NonFungibleToken.cdc",
 			"aliases": {
-				"testnet": "9a0766d93b6608b7",
-				"emulator": "ee82856bf20e2aa6",
-				"mainnet": "0xf233dcee88fe0abe"
+				"testnet": "0x631e88ae7f1d7c20"
 			}
-		}
+		},
+		"Pieces": "./contracts/Pieces.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -49,16 +43,19 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"accounts": {
+		"Pieces": {
+			"fromFile": "Pieces.private.json"
+		},
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
 			"key": "dc0097a6b58533e56af78c955e7b0c0f386b5f44f22b75c390beab7fcb1af13f"
 		},
 		"emulator-alice": {
-			"address": "0x01cf0e2f2f715450",
+			"address": "01cf0e2f2f715450",
 			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
 		},
 		"emulator-bob": {
-			"address": "0x179b6b1cb6755e31",
+			"address": "179b6b1cb6755e31",
 			"key": "1a05ba433be5af2988e814d1e4fa08f1574140e6cb5649a861cc6377718c51be"
 		}
 	},
@@ -70,8 +67,8 @@
 				"FungibleToken",
 				"Pieces"
 			],
-			"emulator-bob": [],
-			"emulator-alice": []
+			"emulator-alice": [],
+			"emulator-bob": []
 		}
 	}
 }
