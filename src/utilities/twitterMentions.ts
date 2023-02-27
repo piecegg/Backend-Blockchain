@@ -23,19 +23,13 @@ export const twitterMentions = async () => {
 
 
     if (botUser) {
-        let user = await User.findOne({ username: process.env.TWITTER_BOT_USERNAME })
-        // let at="djZKZWJDSF9wLXVUTkdOaWhrX0htMEg1WUNMMUZ0dzczSy0wS3ZrRHRoQVpjOjE2Nzc0Nzg1NTU5Nzg6MToxOmF0OjE"
-        // let rt="SHVtN1ZtaTFfd0JLZnFMOWRTLTUzT2NaR2tFeDc0dk9PZmhsT1k5V0gxanMzOjE2Nzc0Nzg1NTU5Nzg6MToxOnJ0OjE" 
 
-        if (!user) {
-            return;
-        }
 
         const {
             client: refreshedClient,
             accessToken,
             refreshToken: newRefreshToken,
-        } = await twitterClient.refreshOAuth2Token(user.refreshToken as string);
+        } = await twitterClient.refreshOAuth2Token(botUser.refreshToken as string);
         console.log("client connected")
 
         //updating new tokens in db  
@@ -46,15 +40,13 @@ export const twitterMentions = async () => {
 
             res.on('data', async (chunk) => {
                 let data = chunk.toString();
-                
+
                 if (data.length != 2) {
                     console.log("User mentioned a Tweet")
                     try {
                         let dataJson = JSON.parse(data)
 
-                        //twetting only the required tweet neglecting other mentioned twet that not required
-                        if (dataJson.data.text.includes(process.env.TWITTER_BOT_USERNAME)) {
-                            
+                        if (dataJson.includes.users.length > 2) {
                             //text is the raw text of tweet that user wants to be converted into piece
                             let text = dataJson.includes.tweets[dataJson.includes.tweets.length - 1].text.replaceAll(" ", "+")
                             let imageLink = `http://assets.imgix.net/~text?txt=${text}&txt-color=4B5E75`
@@ -63,6 +55,7 @@ export const twitterMentions = async () => {
                             await refreshedClient.v2.tweet({ "text": imageLink, "reply": { "in_reply_to_tweet_id": dataJson.includes.tweets[0].id, "exclude_reply_user_ids": [dataJson.includes.tweets[0].in_reply_to_user_id] } })
                             console.log("tweet send")
                         }
+
                     }
                     catch (e) {
                         console.log(e)
