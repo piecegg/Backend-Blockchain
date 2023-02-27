@@ -1,0 +1,73 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: wallet
+      POSTGRES_USER: wallet
+      POSTGRES_PASSWORD: wallet
+
+  redis:
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis-config/users.acl:/usr/local/etc/redis/users.acl
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+
+  emulator:
+    image: gcr.io/flow-container-registry/emulator:0.27.3
+    command: emulator -b 100ms -v --persist
+    ports:
+      - "3569:3569"
+    volumes:
+      - emulator-persist:/flowdb
+    env_file:
+      - ./.env
+    environment:
+      FLOW_SERVICEPRIVATEKEY: ${FLOW_WALLET_ADMIN_PRIVATE_KEY}
+      FLOW_SERVICEKEYSIGALGO: ECDSA_P256
+      FLOW_SERVICEKEYHASHALGO: SHA3_256
+      FLOW_DBPATH: /flowdb
+      FLOW_TRANSACTIONEXPIRY: 600
+
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/wallet/Dockerfile
+      target: dependencies
+      network: host # docker build sometimes has problems fetching from alpine's CDN
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    environment:
+      FLOW_WALLET_DATABASE_DSN: postgresql://wallet:wallet@db:5432/wallet
+      FLOW_WALLET_DATABASE_TYPE: psql
+      FLOW_WALLET_ACCESS_API_HOST: emulator:3569
+      FLOW_WALLET_CHAIN_ID: flow-emulator
+    working_dir: /flow-wallet-api
+    volumes:
+      - .:/flow-wallet-api:ro
+      - go-modules:/go/pkg/mod
+      - go-cache:/root/.cache/go-build
+    depends_on:
+      - db
+      - emulator
+      - redis
+
+volumes:
+  emulator-persist:
+  go-modules:
+  go-cache:

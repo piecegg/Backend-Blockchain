@@ -1,0 +1,38 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+.env*
+!.env.example
+*.db
+*.db-journal
+__debug_bin
+.vscode
+tmp/
+*.pid
+
+# Docker specific
+.github/
+api/
+examples/
+docker/
+docker-compose.yml
+docker-compose.test-suite.yml
+Makefile
+
+# Not required for build
+api-test-scripts/
+*.md
+*.svg
+*.html
+*.yml
