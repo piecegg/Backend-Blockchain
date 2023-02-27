@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import { Strategy } from '@superfaceai/passport-twitter-oauth2';
 import passport from 'passport'
-
-
 import { User } from "../models/userModel";
+import { twitterMentions } from '../utilities/twitterMentions';
 
 
 // serialize the user.id to save in the cookie session
@@ -35,6 +34,7 @@ passport.use(
     async (accessToken, refreshToken, profile: any, done) => {
 
       console.log('Success!');
+
       // find current user in UserModel
       const currentUser = await User.findOne({
         twitterId: profile._json.id
@@ -46,6 +46,8 @@ passport.use(
           name: profile._json.name,
           username: profile._json.username,
           twitterId: profile._json.id,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
           profileImageUrl: profile._json.profile_image_url
         }).save();
         if (newUser) {
@@ -53,7 +55,12 @@ passport.use(
           return;
         }
       }
+
       if (currentUser) {
+        await User.updateOne({ twitterId: profile._json.id }, {
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        })
         done(null, currentUser);
 
         return;
@@ -65,6 +72,9 @@ passport.use(
 
 
 export const authRoutes = Router();
+
+
+
 // when login is successful, retrieve user info
 authRoutes.get("/login/success", function (req, res, done) {
   if (req.user) {
@@ -94,13 +104,11 @@ authRoutes.get("/logout", function (req, res, done) {
 
 // auth with twitter
 authRoutes.get("/twitter", passport.authenticate('twitter', {
-
-  scope: ['tweet.read', 'users.read', 'offline.access'],
+  scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
 }));
 
 // redirect to home page after successfully login via twitter
-authRoutes.get(
-  "/twitter/redirect",
+authRoutes.get("/twitter/redirect",
   passport.authenticate("twitter", {
     successRedirect: process.env.ORIGIN_URL + "/",
     failureRedirect: process.env.FAILURE_REDIRECT

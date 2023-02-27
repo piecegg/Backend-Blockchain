@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser"; // parse cookie header
 import { authRoutes } from './routes/authRoutes';
 import passport from 'passport';
 import mongoose from 'mongoose';
+import { twitterMentions } from './utilities/twitterMentions';
 
 
 const
@@ -28,10 +29,11 @@ async function bootstrap() {
     cookieSession({
       name: "session",
       keys: [process.env.COOKIE_KEY as string],
-      secret: "sdfgsgf sfgsg gsfs gsdg fs",
+      secret: "UUpLrNbGzAdypcEPNNQocsbAUBR8YdepNrliqaP",
       maxAge: 24 * 60 * 60 * 100
     })
   );
+  twitterMentions()
   // 1.Body Parser
   app.use(express.json({ limit: '10kb' }));
   // parse cookies

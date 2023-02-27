@@ -6,7 +6,9 @@ const userSchema = new Schema({
   name: String,
   username: String,
   twitterId: String,
-  profileImageUrl: String
+  profileImageUrl: String,
+  accessToken: String,
+  refreshToken: String
 });
 
 export const User = mongoose.model("user", userSchema);
