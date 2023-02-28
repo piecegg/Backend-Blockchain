@@ -4,7 +4,7 @@ import axios from "axios";
 export const fetchAccounts = async () => {
   var config = {
     method: "get",
-    url: "http://localhost:3000/v1/accounts",
+    url: "https://piece.herokuapp.com/v1/accounts",
     headers: {},
   };
 
@@ -20,7 +20,7 @@ export const fetchAccounts = async () => {
 export const createAccount = async (IdempotencyKey: string) => {
   var config = {
     method: "post",
-    url: "http://localhost:3000/v1/accounts?sync=nonez",
+    url: "https://piece.herokuapp.com/v1/accounts?sync=nonez",
     headers: {
       "Idempotency-Key": IdempotencyKey,
     },
