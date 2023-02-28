@@ -48,6 +48,8 @@ export const twitterMentions = async () => {
           console.log("User mentioned a Tweet");
           try {
             let dataJson = JSON.parse(data);
+            
+            if (!dataJson.includes) return;
 
             if (dataJson.includes.users.length > 2) {
               //text is the raw text of tweet that user wants to be converted into piece
