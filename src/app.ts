@@ -1,27 +1,26 @@
-import * as dotenv from 'dotenv'
-dotenv.config()
+/** @format */
 
-import express, { NextFunction, Request, Response, response } from 'express';
-import cors from 'cors';
-import AppError from './utilities/appError';
+import * as dotenv from "dotenv";
+dotenv.config();
+
+import express, { NextFunction, Request, Response, response } from "express";
+import cors from "cors";
+import AppError from "./utilities/appError";
 import cookieSession from "cookie-session";
 
-
-
 import cookieParser from "cookie-parser"; // parse cookie header
-import { authRoutes } from './routes/authRoutes';
+import { walletApiRoutes } from "./routes/walletAPI";
+/* import { authRoutes } from './routes/authRoutes';
 import passport from 'passport';
 import mongoose from 'mongoose';
-import { twitterMentions } from './utilities/twitterMentions';
+import { twitterMentions } from './utilities/twitterMentions'; */
 
+const app = express(),
+  port = process.env.PORT || 8000;
 
-const
-  app = express(),
-  port = process.env.PORT || 8000
-
-mongoose.connect(process.env.MONGODB_URI as string, () => {
+/* mongoose.connect(process.env.MONGODB_URI as string, () => {
   console.log("connected to mongo db");
-});
+}); */
 
 async function bootstrap() {
   // MIDDLEWARE
@@ -30,40 +29,39 @@ async function bootstrap() {
       name: "session",
       keys: [process.env.COOKIE_KEY as string],
       secret: "UUpLrNbGzAdypcEPNNQocsbAUBR8YdepNrliqaP",
-      maxAge: 24 * 60 * 60 * 100
+      maxAge: 24 * 60 * 60 * 100,
     })
   );
-  twitterMentions()
+  //  twitterMentions()
   // 1.Body Parser
-  app.use(express.json({ limit: '10kb' }));
+  app.use(express.json({ limit: "10kb" }));
   // parse cookies
   app.use(cookieParser());
 
   // initalize passport
-  app.use(passport.initialize());
+  //  app.use(passport.initialize());
   // deserialize cookie from the browser
 
-  app.use(passport.session());
+  //  app.use(passport.session());
   // set up cors to allow us to accept requests from our client
   app.use(
     cors({
       origin: process.env.ORIGIN_URL, // allow to server to accept request from different origin
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-      credentials: true // allow session cookie from browser to pass through
+      credentials: true, // allow session cookie from browser to pass through
     })
   );
 
+  // set up routes
+  app.use("/walletApi", walletApiRoutes);
+  //  app.use("/auth", authRoutes);
 
-  // set up routes 
-  app.use("/auth", authRoutes);
-
-  const authCheck = function(req:Request,res:Response,next:NextFunction){
+  const authCheck = function (req: Request, res: Response, next: NextFunction) {
     if (!req.user) {
       res.status(401).json({
         authenticated: false,
-        message: "user has not been authenticated"
+        message: "user has not been authenticated",
       });
-      
     } else {
       next();
     }
@@ -77,18 +75,18 @@ async function bootstrap() {
       authenticated: true,
       message: "user successfully authenticated",
       user: req.user,
-      cookies: req.cookies
+      cookies: req.cookies,
     });
   });
 
   // UNHANDLED ROUTES
-  app.all('*', (req: Request, res: Response, next: NextFunction) => {
+  app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(new AppError(404, `Route ${req.originalUrl} not found`));
   });
 
   // GLOBAL ERROR HANDLER
   app.use((err: AppError, req: Request, res: Response, next: NextFunction) => {
-    err.status = err.status || 'error';
+    err.status = err.status || "error";
     err.statusCode = err.statusCode || 500;
 
     res.status(err.statusCode).json({
@@ -102,7 +100,6 @@ async function bootstrap() {
   });
 }
 
-bootstrap()
-  .catch((err) => {
-    throw err;
-  })
+bootstrap().catch((err) => {
+  throw err;
+});
