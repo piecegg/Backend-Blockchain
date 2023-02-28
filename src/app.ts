@@ -18,7 +18,7 @@ import { stripeRoutes } from "./routes/stripeRoutes.routes";
 import { pieceRoutes } from "./routes/pieceRoutes";
 
 const app = express(),
-  port = process.env.PORT || 8000;
+  port = process.env.PORT || 80;
 
 mongoose.connect(process.env.MONGODB_URI as string, () => {
   console.log("connected to mongo db");
