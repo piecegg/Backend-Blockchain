@@ -110,7 +110,7 @@ type Config struct {
 	TransactionTimeout time.Duration `env:"TRANSACTION_TIMEOUT" envDefault:"0"`
 
 	// Idempotency middleware configuration
-	DisableIdempotencyMiddleware bool `env:"DISABLE_IDEMPOTENCY_MIDDLEWARE" envDefault:"false"`
+	DisableIdempotencyMiddleware bool `env:"DISABLE_IDEMPOTENCY_MIDDLEWARE" envDefault:"true"`
 	// Idempotency middleware database type;
 	// - "local", in-memory w/ no multi-instance support
 	// - "shared", sql (gorm) database shared with the app (DatabaseType)

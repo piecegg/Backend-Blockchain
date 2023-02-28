@@ -68,6 +68,7 @@ func main() {
 	os.Exit(0)
 }
 
+// Server boilerplate
 func runServer(cfg *configs.Config) {
 	configs.ConfigureLogger(cfg.LogLevel)
 
@@ -303,8 +304,9 @@ func runServer(cfg *configs.Config) {
 
 	// Server boilerplate
 	srv := &http.Server{
-		Handler:      h,
-		Addr:         fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		Handler: h,
+		// Addr:         fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
+		Addr:         "0.0.0.0:" + os.Getenv("PORT"),
 		WriteTimeout: 0, // Disabled, set cfg.ServerRequestTimeout instead
 		ReadTimeout:  0, // Disabled, set cfg.ServerRequestTimeout instead
 	}
