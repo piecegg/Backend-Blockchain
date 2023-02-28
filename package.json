@@ -45,6 +45,7 @@
     "passport-twitter": "^1.0.4",
     "request": "^2.88.2",
     "sha3": "^2.1.4",
+    "stripe": "^11.12.0",
     "ts-node-dev": "^2.0.0",
     "twilio": "^4.7.2",
     "twitter-api-v2": "^1.14.2"
