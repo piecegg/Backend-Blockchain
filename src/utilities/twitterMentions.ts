@@ -6,6 +6,8 @@ import { User } from "../models/userModel";
 import https from "https";
 import passport from "passport";
 import { createAccount } from "../services/walletAPI.service";
+import { Piece } from "../models/pieceModel";
+import { savePieceListingData } from "../controllers/piece.controller";
 
 const twitterClient = new TwitterApi({
   clientId: process.env.TWITTER_CLIENT_ID as string,
@@ -46,13 +48,20 @@ export const twitterMentions = async () => {
           console.log("User mentioned a Tweet");
           try {
             let dataJson = JSON.parse(data);
+            
+            if (!dataJson.includes) return;
 
             if (dataJson.includes.users.length > 2) {
               //text is the raw text of tweet that user wants to be converted into piece
               let text = dataJson.includes.tweets[
                 dataJson.includes.tweets.length - 1
-              ].text.replaceAll(" ", "+");
-              let imageLink = `http://assets.imgix.net/~text?txt=${text}&txt-color=4B5E75`;
+              ].text;
+              
+              //save the tweet data for listing page 
+              let listingId = await savePieceListingData(dataJson.data.id ,"1",dataJson.includes.users[1].name,dataJson.data.created_at,text)
+
+
+              let imageLink = process.env.ORIGIN_URL+"/listing/"+listingId;
               //console.log(dataJson)
 
               await refreshedClient.v2.tweet({
@@ -75,11 +84,12 @@ export const twitterMentions = async () => {
                     })[0].author_id
                   : [];
 
+              
               // We check that an account with this user ID has not b
 
               // We create wallet with the userId
-              const account = createAccount(authorUserId);
-              console.log(account);
+              // const account = createAccount(authorUserId);
+              // console.log(account);
 
               // Call the minting endpoint
 
