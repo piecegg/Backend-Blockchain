@@ -1,7 +1,8 @@
 import express, { NextFunction, Request, Response, response } from 'express';
 import cors from 'cors';
 import AppError from './utilities/appError';
-
+require("dotenv").config()
+const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST)
 const
   app = express(),
   port = process.env.PORT || 8000
@@ -36,6 +37,32 @@ async function bootstrap() {
   app.listen(port, () => {
     console.log(`Server on port: ${port}`);
   });
+
+  app.post("/payment", cors(), async (req, res)=>{
+    let {amount, id} = req.body
+
+    try {
+        const payment = await stripe.paymentIntents.create({
+            amount,
+            currency: "USD",
+            description: "Payment",
+            payment_method: id,
+            confirm: true
+        })
+
+        console.log("Payment", payment)
+        res.json({
+            message: "Payment was successful",
+            success: true
+        })
+    } catch (error) {
+        console.log("Error", error)
+        res.json({
+            message: "Payment Failed",
+            success: false
+        })
+    }
+})
 }
 
 bootstrap()
