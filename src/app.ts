@@ -14,6 +14,7 @@ import { authRoutes } from "./routes/authRoutes.routes";
 import passport from "passport";
 import mongoose from "mongoose";
 import { twitterMentions } from "./utilities/twitterMentions";
+import { stripeRoutes } from "./routes/stripeRoutes.routes";
 
 const app = express(),
   port = process.env.PORT || 8000;
@@ -55,6 +56,7 @@ async function bootstrap() {
   // set up routes
   app.use("/walletApi", walletApiRoutes);
   app.use("/auth", authRoutes);
+  app.use("/stripe", stripeRoutes);
 
   const authCheck = function (req: Request, res: Response, next: NextFunction) {
     if (!req.user) {
