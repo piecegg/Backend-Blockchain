@@ -17,7 +17,7 @@ export const fetchAccounts = async () => {
     });
 };
 
-export const createAccount = async (IdempotencyKey) => {
+export const createAccount = async (IdempotencyKey: string) => {
   var config = {
     method: "post",
     url: "http://localhost:3000/v1/accounts?sync=nonez",

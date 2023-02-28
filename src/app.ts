@@ -9,8 +9,8 @@ import AppError from "./utilities/appError";
 import cookieSession from "cookie-session";
 
 import cookieParser from "cookie-parser"; // parse cookie header
-import { walletApiRoutes } from "./routes/walletAPI";
-import { authRoutes } from "./routes/authRoutes";
+import { walletApiRoutes } from "./routes/walletAPI.routes";
+import { authRoutes } from "./routes/authRoutes.routes";
 import passport from "passport";
 import mongoose from "mongoose";
 import { twitterMentions } from "./utilities/twitterMentions";
@@ -32,17 +32,17 @@ async function bootstrap() {
       maxAge: 24 * 60 * 60 * 100,
     })
   );
-  //  twitterMentions()
+  twitterMentions();
   // 1.Body Parser
   app.use(express.json({ limit: "10kb" }));
   // parse cookies
   app.use(cookieParser());
 
   // initalize passport
-  //  app.use(passport.initialize());
+  app.use(passport.initialize());
   // deserialize cookie from the browser
 
-  //  app.use(passport.session());
+  app.use(passport.session());
   // set up cors to allow us to accept requests from our client
   app.use(
     cors({
