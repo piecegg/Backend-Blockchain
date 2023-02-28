@@ -40,7 +40,6 @@ pub contract Pieces: NonFungibleToken {
 		pub let name: String
 		pub let description: String
 		pub let image: MetadataViews.IPFSFile
-		pub let price: UFix64
 		pub var extra: {String: AnyStruct}
 		pub var minted: UInt64
 		pub let purchasers: {UInt64: Address}
@@ -54,12 +53,11 @@ pub contract Pieces: NonFungibleToken {
 			self.minted = self.minted + 1
 		}
 
-		init(_name: String, _description: String, _image: MetadataViews.IPFSFile, _price: UFix64, _extra: {String: AnyStruct}) {
+		init(_name: String, _description: String, _image: MetadataViews.IPFSFile, _extra: {String: AnyStruct}) {
 			self.metadataId = Pieces.nextMetadataId
 			self.name = _name
 			self.description = _description
 			self.image = _image
-			self.price = _price
 			self.extra = _extra
 			self.minted = 0
 			self.purchasers = {}
@@ -253,39 +251,6 @@ pub contract Pieces: NonFungibleToken {
 		}
 	}
 
-	// Public function to mint NFTs.
-	pub fun mintNFT(metadataId: UInt64, recipient: &{NonFungibleToken.Receiver}, payment: @FlowToken.Vault): UInt64 {
-		pre {
-			payment.balance == 1.0:
-				"Payment does not match the price. You passed in ".concat(payment.balance.toString()).concat(" but this NFT costs 1 Flow"))
-		}
-		let price: UFix64 = 1.0
-
-		// Handle royalty
-		let royalty = Pieces.getCollectionAttribute(key: "nftRoyalty") as! MetadataViews.Royalty
-		royalty.receiver.borrow()!.deposit(from: <- payment.withdraw(amount: price * royalty.cut))
-
-
-		// Give the rest to the collection owner
-		let paymentRecipient = self.account.getCapability(/public/flowTokenReceiver)
-								.borrow<&FlowToken.Vault{FungibleToken.Receiver}>()!
-		paymentRecipient.deposit(from: <- payment)
-
-		// Mint the nft
-		let nft <- create NFT(_metadataId: metadataId, _recipient: recipient.owner!.address)
-		let nftId: UInt64 = nft.id
-		let metadata = self.getNFTMetadata(metadataId)!
-		self.collectionInfo["profit"] = (self.getCollectionAttribute(key: "profit") as! UFix64) + price
-
-		// Emit event
-		emit Purchase(id: nftId, recipient: recipient.owner!.address, metadataId: metadataId, name: metadata.name, description: metadata.description, image: metadata.image, price: price)
-
-		// Deposit nft
-		recipient.deposit(token: <- nft)
-
-		return nftId
-	}
-
 	pub resource Administrator {
 		pub fun createNFTMetadata(name: String, description: String, imagePath: String, ipfsCID: String, extra: {String: AnyStruct}) {
 			Pieces.metadatas[Pieces.nextMetadataId] = NFTMetadata(
@@ -295,7 +260,6 @@ pub contract Pieces: NonFungibleToken {
 					cid: ipfsCID,
 					path: imagePath
 				),
-				_price: 1.0,
 				_extra: extra
 			)
 
@@ -375,7 +339,6 @@ pub contract Pieces: NonFungibleToken {
 				path: "/Alex1.png"
 		)
     self.collectionInfo["ipfsCID"] = "ipfs://bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4"
-    self.collectionInfo["price"] = 1.0
     self.collectionInfo["dateCreated"] = getCurrentBlock().timestamp
     self.collectionInfo["profit"] = 0.0
 		self.collectionInfo["nftRoyalty"] =  MetadataViews.Royalty(
