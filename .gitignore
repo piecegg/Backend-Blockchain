@@ -1,3 +1,4 @@
 node_modules
 .env
 Pieces.private.json
+.env
