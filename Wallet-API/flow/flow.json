@@ -46,7 +46,7 @@
   "accounts": {
     "emulator-account": {
       "address": "f8d6e0586b0a20c7",
-      "keys": "91a22fbd87392b019fbe332c32695c14cf2ba5b6521476a8540228bdf1987068",
+      "keys": "09e9d981d8c76f655f3a3f19501719f78857f5f28423d21c0b58393ab1369a52",
       "chain": "flow-emulator"
     }
   }

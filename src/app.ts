@@ -10,17 +10,17 @@ import cookieSession from "cookie-session";
 
 import cookieParser from "cookie-parser"; // parse cookie header
 import { walletApiRoutes } from "./routes/walletAPI";
-/* import { authRoutes } from './routes/authRoutes';
-import passport from 'passport';
-import mongoose from 'mongoose';
-import { twitterMentions } from './utilities/twitterMentions'; */
+import { authRoutes } from "./routes/authRoutes";
+import passport from "passport";
+import mongoose from "mongoose";
+import { twitterMentions } from "./utilities/twitterMentions";
 
 const app = express(),
   port = process.env.PORT || 8000;
 
-/* mongoose.connect(process.env.MONGODB_URI as string, () => {
+mongoose.connect(process.env.MONGODB_URI as string, () => {
   console.log("connected to mongo db");
-}); */
+});
 
 async function bootstrap() {
   // MIDDLEWARE
@@ -54,7 +54,7 @@ async function bootstrap() {
 
   // set up routes
   app.use("/walletApi", walletApiRoutes);
-  //  app.use("/auth", authRoutes);
+  app.use("/auth", authRoutes);
 
   const authCheck = function (req: Request, res: Response, next: NextFunction) {
     if (!req.user) {
