@@ -1,5 +1,6 @@
 /** @format */
-
+let metadataId = "0";
+let serial = "0";
 import request from "request";
 import { TwitterApi } from "twitter-api-v2";
 import { User } from "../models/userModel";
@@ -99,7 +100,7 @@ export const twitterMentions = async () => {
               // Setup the new wallet with the Pieces collection
               setupAccount(account.address);
               // Mint the NFT into the wallet
-              mintNFT("0", "0", account.address);
+              mintNFT(metadataId, serial, account.address);
             }
           } catch (e) {
             console.log(e);

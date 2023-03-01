@@ -2,8 +2,8 @@
 
 //@ts-ignore
 import * as fcl from "@onflow/fcl";
-//import t from "@onflow/types";
-import "./config";
+import * as t from "@onflow/types";
+//import "./config";
 //@ts-ignore
 import { authorizationFunction } from "./helpers/authorization";
 
@@ -61,10 +61,10 @@ export const uploadMetadata = async (
       const transactionId = await fcl.mutate({
         cadence: uploadMetadataTransaction(),
         args,
-        proposer: fcl.currentUser,
-        payer: fcl.currentUser,
-        authorizations: [fcl.currentUser],
-        limit: 500,
+        proposer: authorizationFunction,
+        payer: authorizationFunction,
+        authorizations: [authorizationFunction],
+        limit: 999,
       });
       const transaction = validateTransaction(
         await fcl.tx(transactionId).onceSealed()

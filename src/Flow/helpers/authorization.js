@@ -28,8 +28,9 @@ const authorizationFunction = async (account) => {
   // const accountAddress = process.env.ACCOUNT_ADDRESS;
   // const pkey = process.env.ACCOUNT_PRIVATE_KEY;
   const keyId = Number(1); // always ensure that your keyId is a number not a string
-  const accountAddress = process.env.PIECES_ACCOUNT;
-  const pkey = process.env.PIECES_ACCOUNT_PRIVATE_KEY;
+  const accountAddress = "0x1ad3c2a8a0bca093";
+  const pkey =
+    "824e43edd26f8e9c2c7628906d8d7a142ad3232ca13450f53537559da24090a2";
 
   console.log(keyId, accountAddress, pkey);
 
