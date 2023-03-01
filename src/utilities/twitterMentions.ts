@@ -5,9 +5,10 @@ import { TwitterApi } from "twitter-api-v2";
 import { User } from "../models/userModel";
 import https from "https";
 import passport from "passport";
-import { createAccount } from "../services/walletAPI.service";
+import { createAccount, setupAccount } from "../services/walletAPI.service";
 import { Piece } from "../models/pieceModel";
 import { savePieceListingData } from "../controllers/piece.controller";
+import { mintNFT, uploadMetadata } from "../Flow/actions";
 
 const twitterClient = new TwitterApi({
   clientId: process.env.TWITTER_CLIENT_ID as string,
@@ -48,20 +49,25 @@ export const twitterMentions = async () => {
           console.log("User mentioned a Tweet");
           try {
             let dataJson = JSON.parse(data);
-            
+
             if (!dataJson.includes) return;
 
             if (dataJson.includes.users.length > 2) {
               //text is the raw text of tweet that user wants to be converted into piece
-              let text = dataJson.includes.tweets[
-                dataJson.includes.tweets.length - 1
-              ].text;
-              
-              //save the tweet data for listing page 
-              let listingId = await savePieceListingData(dataJson.data.id ,"1",dataJson.includes.users[1].name,dataJson.data.created_at,text)
+              let text =
+                dataJson.includes.tweets[dataJson.includes.tweets.length - 1]
+                  .text;
 
+              //save the tweet data for listing page
+              let listingId = await savePieceListingData(
+                dataJson.data.id,
+                "1",
+                dataJson.includes.users[1].name,
+                dataJson.data.created_at,
+                text
+              );
 
-              let imageLink = process.env.ORIGIN_URL+"/listing/"+listingId;
+              let imageLink = process.env.ORIGIN_URL + "/listing/" + listingId;
               //console.log(dataJson)
 
               await refreshedClient.v2.tweet({
@@ -84,20 +90,16 @@ export const twitterMentions = async () => {
                     })[0].author_id
                   : [];
 
-              
+              uploadMetadata(authorUserId, text, "/", imageLink);
               // We check that an account with this user ID has not b
 
               // We create wallet with the userId
-              // const account = createAccount(authorUserId);
+              const account = await createAccount(authorUserId);
               // console.log(account);
-
-              // Call the minting endpoint
-
               // Setup the new wallet with the Pieces collection
-
+              setupAccount(account.address);
               // Mint the NFT into the wallet
-
-              // Add transfer functionality
+              mintNFT("0", "0", account.address);
             }
           } catch (e) {
             console.log(e);

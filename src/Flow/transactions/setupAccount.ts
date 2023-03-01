@@ -2,9 +2,9 @@
 
 export const setupAccount = () => {
   return `
-import NonFungibleToken from "../contracts/standard/NonFungibleToken.cdc"
-import Pieces from "../contracts/Pieces.cdc"
-import MetadataViews from "../contracts/standard/MetadataViews.cdc"
+import NonFungibleToken from 0x631e88ae7f1d7c20
+import Pieces from 0x1ad3c2a8a0bca093
+import MetadataViews from 0x631e88ae7f1d7c20
 
 // This transaction configures an account to hold a Pieces NFT.
 

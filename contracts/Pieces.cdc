@@ -40,7 +40,6 @@ pub contract Pieces: NonFungibleToken {
 		pub let name: String
 		pub let description: String
 		pub let image: MetadataViews.IPFSFile
-		pub var extra: {String: AnyStruct}
 		pub var minted: UInt64
 		pub let purchasers: {UInt64: Address}
 		pub let metadataId: UInt64
@@ -53,12 +52,11 @@ pub contract Pieces: NonFungibleToken {
 			self.minted = self.minted + 1
 		}
 
-		init(_name: String, _description: String, _image: MetadataViews.IPFSFile, _extra: {String: AnyStruct}) {
+		init(_name: String, _description: String, _image: MetadataViews.IPFSFile) {
 			self.metadataId = Pieces.nextMetadataId
 			self.name = _name
 			self.description = _description
 			self.image = _image
-			self.extra = _extra
 			self.minted = 0
 			self.purchasers = {}
 		}
@@ -82,7 +80,6 @@ pub contract Pieces: NonFungibleToken {
 				Type<MetadataViews.NFTCollectionDisplay>(),
 				Type<MetadataViews.Royalties>(),
 				Type<MetadataViews.Serial>(),
-				Type<MetadataViews.Traits>(),
 				Type<MetadataViews.NFTView>()
 			]
 		}
@@ -143,8 +140,6 @@ pub contract Pieces: NonFungibleToken {
 					return MetadataViews.Serial(
 						self.serial
 					)
-				case Type<MetadataViews.Traits>():
-					return MetadataViews.dictToTraits(dict: self.getMetadata().extra, excludedNames: nil)
 				case Type<MetadataViews.NFTView>():
 					return MetadataViews.NFTView(
 						id: self.id,
@@ -252,15 +247,14 @@ pub contract Pieces: NonFungibleToken {
 	}
 
 	pub resource Administrator {
-		pub fun createNFTMetadata(name: String, description: String, imagePath: String, ipfsCID: String, extra: {String: AnyStruct}) {
+		pub fun createNFTMetadata(name: String, description: String, imagePath: String, ipfsCID: String) {
 			Pieces.metadatas[Pieces.nextMetadataId] = NFTMetadata(
 				_name: name,
 				_description: description,
 				_image: MetadataViews.IPFSFile(
 					cid: ipfsCID,
 					path: imagePath
-				),
-				_extra: extra
+				)
 			)
 
 			Pieces.nextMetadataId = Pieces.nextMetadataId + 1

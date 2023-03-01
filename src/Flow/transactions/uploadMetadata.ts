@@ -2,13 +2,12 @@
 
 export const uploadMetadata = () => {
   return `
-import Pieces from "address"
+import Pieces from 0x1ad3c2a8a0bca093
 
 transaction(
   name: String,
   description: String,
   image: String,
-  extra: {String: String},
   ipfsCID: String
 ) {
   let Administrator: &Pieces.Administrator
@@ -24,7 +23,6 @@ transaction(
         description: description,
         imagePath: image,
         ipfsCID: ipfsCID,
-        extra: extra,
       )
   }
 }

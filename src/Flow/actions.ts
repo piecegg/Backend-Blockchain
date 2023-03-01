@@ -19,10 +19,6 @@ const validateTransaction = (transactionDetails: any) => {
     return transactionDetails;
   }
 };
-// This is the function that pays for the transaction and fees
-const proposer = authorizationFunction;
-const payer = authorizationFunction;
-const authorizations = [authorizationFunction];
 
 // ///////////////
 // // Cadence code
@@ -48,18 +44,16 @@ import { mintNFT as mintNFTTransaction } from "./Transactions/mintNFT";
 
 // Upload Text metadata to Pieces collection
 export const uploadMetadata = async (
-  name: String,
-  description: String,
-  image: String,
-  extra: { String: String },
-  ipfsCID: String
+  name: string,
+  description: string,
+  image: string,
+  ipfsCID: string
 ) => {
   // Args
   const args = (arg, t) => [
     arg(name, t.String),
     arg(description, t.String),
     arg(image, t.String),
-    arg(extra, t.Dictionary({ key: t.String, value: t.String })),
     arg(ipfsCID, t.String),
   ];
   return new Promise(async (resolve, reject) => {
@@ -106,17 +100,25 @@ export const setupAccount = async () => {
 };
 
 // Mint a Pieces NFT
-export const mintNFT = async (metadataId: String) => {
+export const mintNFT = async (
+  metadataId: string,
+  serial: string,
+  address: string
+) => {
   // Args
-  const args = (arg, t) => [arg(metadataId, t.String)];
+  const args = (arg, t) => [
+    arg(metadataId, t.String),
+    arg(serial, t.UInt64),
+    arg(address, t.Address),
+  ];
   return new Promise(async (resolve, reject) => {
     try {
       const transactionId = await fcl.mutate({
         cadence: mintNFTTransaction(),
         args,
-        proposer: fcl.currentUser,
-        payer: fcl.currentUser,
-        authorizations: [fcl.currentUser],
+        proposer: authorizationFunction,
+        payer: authorizationFunction,
+        authorizations: [authorizationFunction],
         limit: 500,
       });
       const transaction = validateTransaction(
