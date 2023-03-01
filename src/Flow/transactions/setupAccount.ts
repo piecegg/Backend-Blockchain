@@ -24,6 +24,5 @@ transaction {
         }
     }
 }
-
   `;
 };

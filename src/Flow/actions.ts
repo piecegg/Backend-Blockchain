@@ -4,7 +4,7 @@
 import * as fcl from "@onflow/fcl";
 //import t from "@onflow/types";
 import "./config";
-import { Buffer } from "buffer/";
+//@ts-ignore
 import { authorizationFunction } from "./helpers/authorization";
 
 fcl.config().put("accessNode.api", "https://rest-testnet.onflow.org");
@@ -50,7 +50,7 @@ export const uploadMetadata = async (
   ipfsCID: string
 ) => {
   // Args
-  const args = (arg, t) => [
+  const args = (arg: any, t: any) => [
     arg(name, t.String),
     arg(description, t.String),
     arg(image, t.String),
@@ -106,7 +106,7 @@ export const mintNFT = async (
   address: string
 ) => {
   // Args
-  const args = (arg, t) => [
+  const args = (arg: any, t: any) => [
     arg(metadataId, t.String),
     arg(serial, t.UInt64),
     arg(address, t.Address),

@@ -1,5 +1,5 @@
 /** @format */
-
+//@ts-ignore
 import { config } from "@onflow/fcl";
 
 config()
