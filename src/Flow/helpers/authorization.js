@@ -1,6 +1,7 @@
 /** @format */
 
 require("dotenv").config();
+
 const { SHA3 } = require("sha3");
 const { sansPrefix, withPrefix } = require("@onflow/util-address");
 const elliptic = require("elliptic");
@@ -24,10 +25,15 @@ const signWithKey = (privateKey, msgHex) => {
 };
 
 const authorizationFunction = async (account) => {
+  // We are hard coding these values here, but you can pass those values from outside as well.
+  // For example, you can create curried function:
+  // const signer = (keyId, accountAdddress, pkey) => (account) => {...}
+  // and then create multiple signers for different key indices
+
   // const keyId = Number(process.env.ACCOUNT_KEY_ID); // always ensure that your keyId is a number not a string
   // const accountAddress = process.env.ACCOUNT_ADDRESS;
   // const pkey = process.env.ACCOUNT_PRIVATE_KEY;
-  const keyId = Number(1); // always ensure that your keyId is a number not a string
+  const keyId = Number(0); // always ensure that your keyId is a number not a string
   const accountAddress = "0x1ad3c2a8a0bca093";
   const pkey =
     "824e43edd26f8e9c2c7628906d8d7a142ad3232ca13450f53537559da24090a2";
@@ -58,4 +64,5 @@ const authorizationFunction = async (account) => {
 
 module.exports = {
   authorizationFunction,
+  // authorizationFunctionProposer,
 };

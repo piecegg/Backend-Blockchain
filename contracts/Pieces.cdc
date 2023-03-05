@@ -4,14 +4,13 @@ import FungibleToken from "./standard/FungibleToken.cdc"
 import FlowToken from "./standard/FlowToken.cdc"
 
 
-pub contract Pieces: NonFungibleToken {
+pub contract Pieces_1: NonFungibleToken {
 
 	// Collection Information
 	access(self) let collectionInfo: {String: AnyStruct}
 
 	// Contract Information
 	pub var nextEditionId: UInt64
-	pub var nextMetadataId: UInt64
 	pub var totalSupply: UInt64
 
   // Events
@@ -37,7 +36,7 @@ pub contract Pieces: NonFungibleToken {
 	access(account) let nftStorage: @{Address: {UInt64: NFT}}
 
 	pub struct NFTMetadata {
-		pub let name: String
+		pub let twitterId: UInt64
 		pub let description: String
 		pub let image: MetadataViews.IPFSFile
 		pub var minted: UInt64
@@ -52,9 +51,9 @@ pub contract Pieces: NonFungibleToken {
 			self.minted = self.minted + 1
 		}
 
-		init(_name: String, _description: String, _image: MetadataViews.IPFSFile) {
-			self.metadataId = Pieces.nextMetadataId
-			self.name = _name
+		init(_twitterId: UInt64, _description: String, _image: MetadataViews.IPFSFile) {
+			self.metadataId = _twitterId
+			self.twitterId = _twitterId
 			self.description = _description
 			self.image = _image
 			self.minted = 0
@@ -69,7 +68,7 @@ pub contract Pieces: NonFungibleToken {
 		pub let serial: UInt64
 
 		pub fun getMetadata(): NFTMetadata {
-			return Pieces.getNFTMetadata(self.metadataId)!
+			return Pieces_1.getNFTMetadata(self.metadataId)!
 		}
 
 		pub fun getViews(): [Type] {
@@ -89,44 +88,44 @@ pub contract Pieces: NonFungibleToken {
 				case Type<MetadataViews.Display>():
 					let metadata = self.getMetadata()
 					return MetadataViews.Display(
-						name: metadata.name,
+						twitterId: metadata.twitterId.toString(),
 						description: metadata.description,
 						thumbnail: metadata.image
 					)
 				case Type<MetadataViews.NFTCollectionData>():
 					return MetadataViews.NFTCollectionData(
-						storagePath: Pieces.CollectionStoragePath,
-						publicPath: Pieces.CollectionPublicPath,
-						providerPath: Pieces.CollectionPrivatePath,
+						storagePath: Pieces_1.CollectionStoragePath,
+						publicPath: Pieces_1.CollectionPublicPath,
+						providerPath: Pieces_1.CollectionPrivatePath,
 						publicCollection: Type<&Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection}>(),
 						publicLinkedType: Type<&Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection}>(),
 						providerLinkedType: Type<&Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection, NonFungibleToken.Provider}>(),
 						createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
-								return <- Pieces.createEmptyCollection()
+								return <- Pieces_1.createEmptyCollection()
 						})
 					)
         case Type<MetadataViews.ExternalURL>():
           return MetadataViews.ExternalURL("https://hackathon.flow.com/")
         case Type<MetadataViews.NFTCollectionDisplay>():
           let squareMedia = MetadataViews.Media(
-            file: Pieces.getCollectionAttribute(key: "image") as! MetadataViews.IPFSFile,
+            file: Pieces_1.getCollectionAttribute(key: "image") as! MetadataViews.IPFSFile,
             mediaType: "image"
           )
 
 					var bannerMedia: MetadataViews.Media? = nil
-					let bannerImage = Pieces.getCollectionAttribute(key: "bannerImage") as! MetadataViews.IPFSFile
+					let bannerImage = Pieces_1.getCollectionAttribute(key: "bannerImage") as! MetadataViews.IPFSFile
 						bannerMedia = MetadataViews.Media(
 							file: bannerImage,
 							mediaType: "image"
 					)
 
         return MetadataViews.NFTCollectionDisplay(
-          name: Pieces.getCollectionAttribute(key: "name") as! String,
-          description: Pieces.getCollectionAttribute(key: "description") as! String,
+          name: Pieces_1.getCollectionAttribute(key: "name") as! String,
+          description: Pieces_1.getCollectionAttribute(key: "description") as! String,
           externalURL: MetadataViews.ExternalURL("https://hackathon.flow.com/"),
           squareImage: squareMedia,
           bannerImage: bannerMedia ?? squareMedia,
-          socials: Pieces.getCollectionAttribute(key: "socials") as! {String: MetadataViews.ExternalURL}
+          socials: Pieces_1.getCollectionAttribute(key: "socials") as! {String: MetadataViews.ExternalURL}
         )
         case Type<MetadataViews.Royalties>():
           return MetadataViews.Royalties([
@@ -157,32 +156,32 @@ pub contract Pieces: NonFungibleToken {
 
 		init(_metadataId: UInt64, _recipient: Address) {
 			pre {
-				Pieces.metadatas[_metadataId] != nil:
+				Pieces_1.metadatas[_metadataId] != nil:
 					"This NFT does not exist in this collection."
 			}
-			let _serial = Pieces.getNFTMetadata(_metadataId)!.minted
+			let _serial = Pieces_1.getNFTMetadata(_metadataId)!.minted
 			self.id = self.uuid
 			self.metadataId = _metadataId
 			self.serial = _serial
 
 			// Update the buyers list so we keep track of who is purchasing
-			if let buyersRef = &Pieces.buyersList[_recipient] as &{UInt64: [UInt64]}? {
+			if let buyersRef = &Pieces_1.buyersList[_recipient] as &{UInt64: [UInt64]}? {
 				if let metadataIdMap = &buyersRef[_metadataId] as &[UInt64]? {
 					metadataIdMap.append(_serial)
 				} else {
 					buyersRef[_metadataId] = [_serial]
 				}
 			} else {
-				Pieces.buyersList[_recipient] = {_metadataId: [_serial]}
+				Pieces_1.buyersList[_recipient] = {_metadataId: [_serial]}
 			}
 
-			let metadataRef = (&Pieces.metadatas[_metadataId] as &NFTMetadata?)!
+			let metadataRef = (&Pieces_1.metadatas[_metadataId] as &NFTMetadata?)!
 			// Update who bought this serial inside NFTMetadata
 			metadataRef.purchased(serial: _serial, buyer: _recipient)
 			// Update the total supply of this MetadataId by 1
 			metadataRef.updateMinted()
-			// Update Pieces collection NFTs count
-			Pieces.totalSupply = Pieces.totalSupply + 1
+			// Update Pieces_1 collection NFTs count
+			Pieces_1.totalSupply = Pieces_1.totalSupply + 1
 
 			emit Minted(id: self.id, recipient: _recipient, metadataId: _metadataId)
 		}
@@ -230,7 +229,7 @@ pub contract Pieces: NonFungibleToken {
 		}
 
 		pub fun claim() {
-			if let storage = &Pieces.nftStorage[self.owner!.address] as &{UInt64: NFT}? {
+			if let storage = &Pieces_1.nftStorage[self.owner!.address] as &{UInt64: NFT}? {
 				for id in storage.keys {
 					self.deposit(token: <- storage.remove(key: id)!)
 				}
@@ -247,31 +246,29 @@ pub contract Pieces: NonFungibleToken {
 	}
 
 	pub resource Administrator {
-		pub fun createNFTMetadata(name: String, description: String, imagePath: String, ipfsCID: String) {
-			Pieces.metadatas[Pieces.nextMetadataId] = NFTMetadata(
-				_name: name,
+		pub fun createNFTMetadata(twitterId: UInt64, description: String, imagePath: String, ipfsCID: String) {
+			Pieces_1.metadatas[twitterId] = NFTMetadata(
+				_twitterId: twitterId,
 				_description: description,
 				_image: MetadataViews.IPFSFile(
 					cid: ipfsCID,
 					path: imagePath
 				)
 			)
-
-			Pieces.nextMetadataId = Pieces.nextMetadataId + 1
 		}
 
 		// mintNFT mints a new NFT and deposits
 		// it in the recipients collection
-		pub fun mintNFT(metadataId: UInt64, serial: UInt64, recipient: Address) {
+		pub fun mintNFT(metadataId: UInt64, recipient: Address) {
 
 			let nft <- create NFT(_metadataId: metadataId, _recipient: recipient)
-			if let recipientCollection = getAccount(recipient).getCapability(Pieces.CollectionPublicPath).borrow<&Pieces.Collection{NonFungibleToken.CollectionPublic}>() {
+			if let recipientCollection = getAccount(recipient).getCapability(Pieces_1.CollectionPublicPath).borrow<&Pieces_1.Collection{NonFungibleToken.CollectionPublic}>() {
 				recipientCollection.deposit(token: <- nft)
 			} else {
-				if let storage = &Pieces.nftStorage[recipient] as &{UInt64: NFT}? {
+				if let storage = &Pieces_1.nftStorage[recipient] as &{UInt64: NFT}? {
 					storage[nft.id] <-! nft
 				} else {
-					Pieces.nftStorage[recipient] <-! {nft.id: <- nft}
+					Pieces_1.nftStorage[recipient] <-! {nft.id: <- nft}
 				}
 			}
 		}
@@ -281,9 +278,9 @@ pub contract Pieces: NonFungibleToken {
 			return <- create Administrator()
 		}
 
-		// change pieces of collection info
+		// change pieces_1 of collection info
 		pub fun changeField(key: String, value: AnyStruct) {
-			Pieces.collectionInfo[key] = value
+			Pieces_1.collectionInfo[key] = value
 		}
 	}
 
@@ -310,7 +307,6 @@ pub contract Pieces: NonFungibleToken {
 		collectionInfo["metadatas"] = self.metadatas
 		collectionInfo["buyersList"] = self.buyersList
 		collectionInfo["totalSupply"] = self.totalSupply
-		collectionInfo["nextMetadataId"] = self.nextMetadataId
 		collectionInfo["version"] = 1
 		return collectionInfo
 	}
@@ -322,7 +318,7 @@ pub contract Pieces: NonFungibleToken {
 	init() {
 		// Collection Info
 		self.collectionInfo = {}
-		self.collectionInfo["name"] = "Pieces"
+		self.collectionInfo["name"] = "Pieces_1"
 		self.collectionInfo["description"] = "Inmortalize Everything!"
 		self.collectionInfo["image"] = MetadataViews.IPFSFile(
 				cid: "ipfs://bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4",
@@ -343,17 +339,16 @@ pub contract Pieces: NonFungibleToken {
 
 
 		self.nextEditionId = 0
-		self.nextMetadataId = 0
 		self.totalSupply = 0
 		self.metadatas = {}
 		self.buyersList = {}
 		self.nftStorage <- {}
 
 		// Set the named paths
-		self.CollectionStoragePath = /storage/PiecesCollection
-		self.CollectionPublicPath = /public/PiecesCollection
-		self.CollectionPrivatePath = /private/PiecesCollection
-		self.AdministratorStoragePath = /storage/PiecesAdministrator
+		self.CollectionStoragePath = /storage/Pieces_1Collection
+		self.CollectionPublicPath = /public/Pieces_1Collection
+		self.CollectionPrivatePath = /private/Pieces_1Collection
+		self.AdministratorStoragePath = /storage/Pieces_1Administrator
 
 		// Create a Collection resource and save it to storage
 		let collection <- create Collection()

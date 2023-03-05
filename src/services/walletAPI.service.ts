@@ -18,7 +18,24 @@ export const fetchAccounts = async () => {
     });
 };
 
-export const createAccount = async (IdempotencyKey: string) => {
+export const fetchAccount = async (accountAddress: string) => {
+  let config = {
+    method: "get",
+    url: `https://piece.herokuapp.com/v1/accounts/${accountAddress}`,
+    headers: {},
+  };
+
+  return axios(config)
+    .then(function (response) {
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+      return error;
+    });
+};
+
+export const createAccount = async () => {
   let config = {
     method: "post",
     url: "https://piece.herokuapp.com/v1/accounts?sync=nonez",
@@ -58,26 +75,26 @@ export const setupAccount = async (address: string) => {
     });
 };
 
-export const mintNFT = async (metadataId, serial, address) => {
+export const mintNFT = async (metadataId: number, address: string) => {
   const mintNFTCode = `
   import NonFungibleToken from 0x631e88ae7f1d7c20
-  import Pieces from 0x1ad3c2a8a0bca093
+  import Pieces_1 from 0x1ad3c2a8a0bca093
   import MetadataViews from 0x631e88ae7f1d7c20
 
 
 
-  transaction(_metadataId: UInt64, _serial: UInt64, _recipient: Address) {
+  transaction(_metadataId: UInt64, _recipient: Address) {
 
-    let Administrator: &Pieces.Administrator
+    let Administrator: &Pieces_1.Administrator
 
     prepare(admin: AuthAccount) {
         // Confirm Admin
-        self.Administrator = admin.borrow<&YoungApeDiaries.Administrator>(from: YoungApeDiaries.AdministratorStoragePath)
+        self.Administrator = admin.borrow<&Pieces_1.Administrator>(from: Pieces_1.AdministratorStoragePath)
                           ?? panic("This account is not the Administrator.")
     }
 
     execute {
-        self.Administrator.mintNFT(metadataId: _metadataId, serial: _serial, recipient: _recipient)
+        self.Administrator.mintNFT(metadataId: _metadataId, recipient: _recipient)
     }
 
 
@@ -89,10 +106,6 @@ export const mintNFT = async (metadataId, serial, address) => {
       {
         type: "UInt64",
         value: metadataId,
-      },
-      {
-        type: "UInt64",
-        value: serial,
       },
       {
         type: "Address",
@@ -120,27 +133,101 @@ export const mintNFT = async (metadataId, serial, address) => {
     });
 };
 
+export const uploadMetadata = async (
+  twitterId: number,
+  description: string,
+  image: string,
+  ipfsCID: string
+) => {
+  var data = JSON.stringify({
+    code: uploadMetadataTx,
+    arguments: [
+      {
+        type: "Number",
+        value: twitterId,
+      },
+      {
+        type: "String",
+        value: description,
+      },
+      {
+        type: "String",
+        value: image,
+      },
+      {
+        type: "String",
+        value: ipfsCID,
+      },
+    ],
+  });
+  let config = {
+    method: "post",
+    url: `https://piece.herokuapp.com/v1/accounts/0x1ad3c2a8a0bca093/transactions`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: data,
+  };
+
+  return axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+      return response.data;
+    })
+    .catch(function (error) {
+      console.log(error.data);
+      return error;
+    });
+};
+
 const setupAccountCode = `
 import NonFungibleToken from 0x631e88ae7f1d7c20
-import Pieces from 0x1ad3c2a8a0bca093
+import Pieces_1 from 0x1ad3c2a8a0bca093
 import MetadataViews from 0x631e88ae7f1d7c20
 
-// This transaction configures an account to hold a Pieces NFT.
+// This transaction configures an account to hold a Pieces_1 NFT.
 
 transaction {
     prepare(signer: AuthAccount) {
         // if the account doesn't already have a collection
-        if signer.borrow<&Pieces.Collection>(from: Pieces.CollectionStoragePath) == nil {
+        if signer.borrow<&Pieces_1.Collection>(from: Pieces_1.CollectionStoragePath) == nil {
 
             // create a new empty collection
-            let collection <- Pieces.createEmptyCollection()
+            let collection <- Pieces_1.createEmptyCollection()
 
             // save it to the account
-            signer.save(<-collection, to: Pieces.CollectionStoragePath)
+            signer.save(<-collection, to: Pieces_1.CollectionStoragePath)
 
             // create a public capability for the collection
-            signer.link<&Pieces.Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection}>(Pieces.CollectionPublicPath, target: Pieces.CollectionStoragePath)
+            signer.link<&Pieces_1.Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection}>(Pieces_1.CollectionPublicPath, target: Pieces_1.CollectionStoragePath)
         }
     }
+}
+  `;
+
+const uploadMetadataTx = `
+import Pieces_1 from 0x1ad3c2a8a0bca093
+
+transaction(
+  twitterId: UInt64,
+  description: String,
+  image: String,
+  ipfsCID: String
+) {
+  let Administrator: &Pieces_1.Administrator
+  prepare(deployer: AuthAccount) {
+    self.Administrator = deployer.borrow<&Pieces_1.Administrator>(from: Pieces_1.AdministratorStoragePath)
+                          ?? panic("This account is not the Administrator.")
+  }
+
+  execute {
+
+      self.Administrator.createNFTMetadata(
+        twitterId: twitterId,
+        description: description,
+        imagePath: image,
+        ipfsCID: ipfsCID,
+      )
+  }
 }
   `;

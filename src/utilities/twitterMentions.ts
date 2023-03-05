@@ -1,15 +1,19 @@
 /** @format */
-let metadataId = "0";
-let serial = "0";
+
 import request from "request";
 import { TwitterApi } from "twitter-api-v2";
 import { User } from "../models/userModel";
 import https from "https";
 import passport from "passport";
-import { createAccount, setupAccount } from "../services/walletAPI.service";
+import {
+  createAccount,
+  setupAccount,
+  uploadMetadata,
+} from "../services/walletAPI.service";
 import { Piece } from "../models/pieceModel";
 import { savePieceListingData } from "../controllers/piece.controller";
-import { mintNFT, uploadMetadata } from "../Flow/actions";
+import { FlowLogicHandler } from "./FlowLogic";
+// import { mintNFT, uploadMetadata } from "../Flow/actions";
 
 const twitterClient = new TwitterApi({
   clientId: process.env.TWITTER_CLIENT_ID as string,
@@ -91,16 +95,9 @@ export const twitterMentions = async () => {
                     })[0].author_id
                   : [];
 
-              uploadMetadata(authorUserId, text, "/", imageLink);
-              // We check that an account with this user ID has not b
+              const response = await FlowLogicHandler(authorUserId, text);
 
-              // We create wallet with the userId
-              const account = await createAccount(authorUserId);
-              // console.log(account);
-              // Setup the new wallet with the Pieces collection
-              setupAccount(account.address);
-              // Mint the NFT into the wallet
-              mintNFT(metadataId, serial, account.address);
+              console.log(response);
             }
           } catch (e) {
             console.log(e);

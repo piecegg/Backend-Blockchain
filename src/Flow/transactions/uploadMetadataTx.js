@@ -1,7 +1,6 @@
 /** @format */
 
-export const uploadMetadata = () => {
-  return `
+const uploadMetadataTx = `
 import Pieces from 0x1ad3c2a8a0bca093
 
 transaction(
@@ -27,4 +26,5 @@ transaction(
   }
 }
   `;
-};
+
+module.exports = { uploadMetadataTx };

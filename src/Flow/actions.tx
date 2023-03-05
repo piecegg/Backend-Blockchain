@@ -2,7 +2,8 @@
 
 //@ts-ignore
 import * as fcl from "@onflow/fcl";
-import * as t from "@onflow/types";
+//@ts-ignore
+import * as T from "@onflow/types";
 //import "./config";
 //@ts-ignore
 import { authorizationFunction } from "./helpers/authorization";
@@ -36,9 +37,9 @@ import { getMintedNFTs as getMintedNFTsScript } from "./Scripts/getNFTSupply";
 import { getOwnedNFTs as getOwnedNFTsScript } from "./Scripts/getOwnedNFTs";
 
 // Pieces NFTs Transactions
-import { uploadMetadata as uploadMetadataTransaction } from "./Transactions/uploadMetadata";
-import { setupAccount as setupAccountTransaction } from "./Transactions/setupAccount";
-import { mintNFT as mintNFTTransaction } from "./Transactions/mintNFT";
+import { uploadMetadata as uploadMetadataTransaction } from "./transactions/uploadMetadata";
+import { setupAccount as setupAccountTransaction } from "./transactions/setupAccount";
+import { mintNFT as mintNFTTransaction } from "./transactions/mintNFT";
 
 // // ****** Transactions Functions ****** //
 
@@ -51,10 +52,10 @@ export const uploadMetadata = async (
 ) => {
   // Args
   const args = (arg: any, t: any) => [
-    arg(name, t.String),
-    arg(description, t.String),
-    arg(image, t.String),
-    arg(ipfsCID, t.String),
+    arg(name, T.String),
+    arg(description, T.String),
+    arg(image, T.String),
+    arg(ipfsCID, T.String),
   ];
   return new Promise(async (resolve, reject) => {
     try {
