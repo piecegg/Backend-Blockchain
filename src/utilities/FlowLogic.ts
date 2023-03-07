@@ -1,12 +1,7 @@
 /** @format */
 
-import {
-  createAccount,
-  setupAccount,
-  uploadMetadata,
-  fetchAccount,
-  mintNFT,
-} from "../services/walletAPI.service";
+import WalletService from "../services/Wallet/walletAPI.service";
+import FlowService from "../services/Flow/Flow.service";
 
 export const FlowLogicHandler = async (TwitterId: number, Text: string) => {
   /* Check the account doesn't already exist
@@ -16,10 +11,10 @@ export const FlowLogicHandler = async (TwitterId: number, Text: string) => {
   */
 
   // Create a wallet for the Id
-  const account = await createAccount();
+  const account = await WalletService.createAccount();
   console.log("Account Address", account.address);
   // Create metadataId
-  const jobResponse = await uploadMetadata(
+  const jobResponse = await FlowService.uploadMetadata(
     TwitterId,
     Text,
     "/Alex1.png",
@@ -28,11 +23,11 @@ export const FlowLogicHandler = async (TwitterId: number, Text: string) => {
   console.log("Job NUMBER 1 responses", jobResponse);
 
   // Setup account
-  const jobResponse2 = await setupAccount(account.address);
+  const jobResponse2 = await FlowService.setupAccount(account.address);
   console.log("Job NUMBER 2 responses", jobResponse2);
 
   // Mint NFT into account
-  const jobResponse3 = await mintNFT(TwitterId, account.address);
+  const jobResponse3 = await FlowService.mintNFT(TwitterId, account.address);
   console.log("Job NUMBER 3 responses", jobResponse3);
 
   return jobResponse3;

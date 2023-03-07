@@ -5,11 +5,6 @@ import { TwitterApi } from "twitter-api-v2";
 import { User } from "../models/userModel";
 import https from "https";
 import passport from "passport";
-import {
-  createAccount,
-  setupAccount,
-  uploadMetadata,
-} from "../services/walletAPI.service";
 import { Piece } from "../models/pieceModel";
 import { savePieceListingData } from "../controllers/piece.controller";
 import { FlowLogicHandler } from "./FlowLogic";
