@@ -3,9 +3,9 @@
 import { Router } from "express";
 import {
   uploadMetadataHandler,
-  fetchAccountHandler,
+  testHandler,
 } from "../controllers/admin.controller";
 export const walletApiRoutes = Router();
 
-walletApiRoutes.get("/uploadMetadata", uploadMetadataHandler);
-walletApiRoutes.get("/fetchAccount", fetchAccountHandler);
+walletApiRoutes.post("/uploadMetadata", uploadMetadataHandler);
+walletApiRoutes.get("/fetchAccount", testHandler);

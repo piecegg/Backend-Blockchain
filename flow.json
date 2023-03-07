@@ -6,7 +6,7 @@
 		}
 	},
 	"contracts": {
-		"Pieces": "./contracts/Pieces.cdc",
+		"Pieces_1": "./contracts/Pieces_1.cdc",
 		"NonFungibleToken": {
 			"source": "./contracts/standard/NonFungibleToken.cdc",
 			"aliases": {
@@ -79,9 +79,17 @@
 		}
 	},
 	"deployments": {
+		"emulator": {
+			"emulator-account": [
+				"Pieces_1",
+				"MetadataViews",
+				"FungibleToken",
+				"NonFungibleToken"
+			]
+		},
 		"testnet": {
 			"testnet-account": [
-				"Pieces"
+				"Pieces_1"
 			]
 		}
 	}

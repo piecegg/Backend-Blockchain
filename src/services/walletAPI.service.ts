@@ -105,7 +105,7 @@ export const mintNFT = async (metadataId: number, address: string) => {
     arguments: [
       {
         type: "UInt64",
-        value: metadataId,
+        value: metadataId.toString(),
       },
       {
         type: "Address",
@@ -134,29 +134,29 @@ export const mintNFT = async (metadataId: number, address: string) => {
 };
 
 export const uploadMetadata = async (
-  twitterId: number,
-  description: string,
-  image: string,
-  ipfsCID: string
+  _twitterId: number,
+  _description: string,
+  _image: string,
+  _ipfsCID: string
 ) => {
   var data = JSON.stringify({
     code: uploadMetadataTx,
     arguments: [
       {
-        type: "Number",
-        value: twitterId,
+        type: "UInt64",
+        value: _twitterId.toString(),
       },
       {
         type: "String",
-        value: description,
+        value: _description,
       },
       {
         type: "String",
-        value: image,
+        value: _image,
       },
       {
         type: "String",
-        value: ipfsCID,
+        value: _ipfsCID,
       },
     ],
   });
@@ -176,7 +176,7 @@ export const uploadMetadata = async (
     })
     .catch(function (error) {
       console.log(error.data);
-      return error;
+      return error.data;
     });
 };
 
@@ -209,10 +209,10 @@ const uploadMetadataTx = `
 import Pieces_1 from 0x1ad3c2a8a0bca093
 
 transaction(
-  twitterId: UInt64,
-  description: String,
-  image: String,
-  ipfsCID: String
+  _twitterId: UInt64,
+  _description: String,
+  _image: String,
+  _ipfsCID: String
 ) {
   let Administrator: &Pieces_1.Administrator
   prepare(deployer: AuthAccount) {
@@ -223,10 +223,10 @@ transaction(
   execute {
 
       self.Administrator.createNFTMetadata(
-        twitterId: twitterId,
-        description: description,
-        imagePath: image,
-        ipfsCID: ipfsCID,
+        twitterId: _twitterId,
+        description: _description,
+        imagePath: _image,
+        ipfsCID: _ipfsCID,
       )
   }
 }

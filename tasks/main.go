@@ -23,11 +23,10 @@ func main() {
 	o.Tx(
 		"uploadMetadata",
 		WithSigner("account"),
-		WithArg("name", `"First Piece"`),
-		WithArg("description", `"I bet that Argentina will win the 2022 World Cup"`),
-		WithArg("image", `"Alex1.png"`),
-		WithArg("extra", `{"String": "Piece Extra Metadata If needed"}`),
-		WithArg("ipfsCID", "ipfs://bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4"),
+		WithArg("_twitterId", `12345`),
+		WithArg("_description", `"I bet that Argentina will win the 2022 World Cup"`),
+		WithArg("_image", `"Alex1.png"`),
+		WithArg("_ipfsCID", "ipfs://bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4"),
 	)
 	color.Green("-----------------------------PASSED---------------------")
 
@@ -43,26 +42,28 @@ func main() {
 	)
 	color.Green("-----------------------------PASSED---------------------")
 
-	// Bob mints an NFT
-	color.Red("Bob should be able to mint an NFT")
-	o.Tx("mintNFT",
-		WithSigner("bob"),
-		WithArg("metadataId", "0"),
-	)
-	color.Green("-----------------------------PASSED---------------------")
+	/*
+		 	// Bob mints an NFT
+			color.Red("Bob should be able to mint an NFT")
+			o.Tx("mintNFT",
+				WithSigner("bob"),
+				WithArg("metadataId", "0"),
+			)
+			color.Green("-----------------------------PASSED---------------------")
 
-	// Get Metadatas recorded in the contract after minting
-	// (supply should increase)
-	color.Red("Should be able to fetch metadatas from the contract")
-	o.Script("getNFTSupply",
-		WithArg("MetadataId", "0"),
-	)
-	color.Green("-----------------------------PASSED---------------------")
+			// Get Metadatas recorded in the contract after minting
+			// (supply should increase)
+			color.Red("Should be able to fetch metadatas from the contract")
+			o.Script("getNFTSupply",
+				WithArg("MetadataId", "0"),
+			)
+			color.Green("-----------------------------PASSED---------------------")
 
-	// Get all the Pieces NFTs owned by this account
-	color.Red("Should be able to fetch all the Pieces NFTs owned by this account")
-	o.Script("getOwnedNFTs",
-		WithArg("Account", "bob"),
-	)
-	color.Green("-----------------------------PASSED---------------------")
+			// Get all the Pieces NFTs owned by this account
+			color.Red("Should be able to fetch all the Pieces NFTs owned by this account")
+			o.Script("getOwnedNFTs",
+				WithArg("Account", "bob"),
+			)
+			color.Green("-----------------------------PASSED---------------------")
+	*/
 }

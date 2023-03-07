@@ -1,10 +1,10 @@
-import Pieces_1 from "../contracts/Pieces.cdc"
+import Pieces_1 from "../contracts/Pieces_1.cdc"
 
 transaction(
-  twitterId: UInt64,
-  description: String,
-  image: String,
-  ipfsCID: String
+  _twitterId: UInt64,
+  _description: String,
+  _image: String,
+  _ipfsCID: String
 ) {
   let Administrator: &Pieces_1.Administrator
   prepare(deployer: AuthAccount) {
@@ -13,12 +13,11 @@ transaction(
   }
 
   execute {
-
       self.Administrator.createNFTMetadata(
-        twitterId: twitterId,
-        description: description,
-        imagePath: image,
-        ipfsCID: ipfsCID,
+        twitterId: _twitterId,
+        description: _description,
+        imagePath: _image,
+        ipfsCID: _ipfsCID,
       )
   }
 }
