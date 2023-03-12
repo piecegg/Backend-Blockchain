@@ -18,7 +18,7 @@ export const FlowLogicHandler = async (TwitterId: number, Text: string) => {
     TwitterId,
     Text,
     "/Alex1.png",
-    "ipfs://bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4"
+    "bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4"
   );
   console.log("Job NUMBER 1 responses", jobResponse);
 
