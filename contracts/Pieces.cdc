@@ -110,32 +110,21 @@ pub contract Pieces_2: NonFungibleToken {
           return MetadataViews.ExternalURL("https://hackathon.flow.com/")
         case Type<MetadataViews.NFTCollectionDisplay>():
 
-          let squareMedia = MetadataViews.Media(
-            file: MetadataViews.IPFSFile(
-				cid: "bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4",
-				path: "/Alex1.png"
-		),
+          let media = MetadataViews.Media(
+            file: MetadataViews.HTTPFile(
+            url: "https://devfolio.co/_next/image?url=https%3A%2F%2Fassets.devfolio.co%2Fhackathons%2Ffa27cfa336754d41aa5ce25acea7815d%2Fprojects%2Ffc806c2296be4507b57881210984dd3e%2F89346bf7-8463-48d3-aed4-b27479001417.jpeg&w=1440&q=75"
+            ),
             mediaType: "image"
           )
 
-					var bannerMedia: MetadataViews.Media? = nil
-					let bannerImage = MetadataViews.IPFSFile(
-				cid: "bafybeihkurbbjxq5v7ag62ahvatrvizmv4tqebzzm26nz6ils4nxgh5ko4",
-				path: "/Alex1.png"
-		)
-						bannerMedia = MetadataViews.Media(
-							file: bannerImage,
-							mediaType: "image"
-					)
-
-        return MetadataViews.NFTCollectionDisplay(
-          name: Pieces_2.getCollectionAttribute(key: "name") as! String,
-          description: Pieces_2.getCollectionAttribute(key: "description") as! String,
-          externalURL: MetadataViews.ExternalURL("https://hackathon.flow.com/"),
-          squareImage: squareMedia,
-          bannerImage: bannerMedia ?? squareMedia,
-          socials: {"Website": MetadataViews.ExternalURL("https://frontend-react-git-testing-piece.vercel.app/")}
-        )
+      		return MetadataViews.NFTCollectionDisplay(
+          	name: Pieces_2.getCollectionAttribute(key: "name") as! String,
+          	description: Pieces_2.getCollectionAttribute(key: "description") as! String,
+          	externalURL: MetadataViews.ExternalURL("https://hackathon.flow.com/"),
+          	squareImage: media,
+          	bannerImage: media,
+          	socials: {"Website": MetadataViews.ExternalURL("https://frontend-react-git-testing-piece.vercel.app/")}
+        	)
         case Type<MetadataViews.Royalties>():
           return MetadataViews.Royalties([
             MetadataViews.Royalty( // This is my own Blotco address
